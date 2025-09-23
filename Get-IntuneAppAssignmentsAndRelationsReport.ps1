@@ -183,7 +183,7 @@ if ($UseOfflineCache) {
     $DoNotDownloadAppIcons = $true
 }
 
-$ScriptVersion = "3.2"
+$ScriptVersion = "4.0"
 
 $ComputerName = $null
 
