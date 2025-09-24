@@ -590,7 +590,7 @@ try {
 			}
 			Write-Host ""
 
-			$scopes = "DeviceManagementApps.Read.All", "Group.Read.All", "Directory.Read.All"
+			$scopes = "DeviceManagementConfiguration.Read.All","DeviceManagementApps.Read.All", "Group.Read.All", "Directory.Read.All"
 
 			Write-Host "Connect to Microsoft Graph API"
 			$MgGraph = Connect-MgGraph -scopes $scopes
