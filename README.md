@@ -1,4 +1,4 @@
-# 📊 Intune App Assignments & Relations Report
+# 📊 Intune App Assignments & Relations Report 4.1
 
 Welcome to the **Intune App Assignments & Relations Report** project! This PowerShell script generates two comprehensive HTML reports from your Microsoft Intune environment:
 
@@ -14,6 +14,7 @@ Before running the script, ensure you have the following PowerShell modules inst
 - `Microsoft.Graph.Authentication`
 - `Microsoft.Graph.Groups`
 - `Microsoft.Graph.Beta.Devices.CorporateManagement`
+- `Microsoft.Graph.Beta.DeviceManagement`
 
 Install all required modules with:
 ```powershell
