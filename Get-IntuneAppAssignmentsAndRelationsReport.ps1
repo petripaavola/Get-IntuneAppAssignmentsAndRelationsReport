@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 4.0
+.VERSION 4.1
 
 .GUID b8b1da56-394d-4f8d-be82-8905f979a5a8
 
@@ -29,6 +29,7 @@ Version 1.0:  Original published version
 Version 2.0:  Support for Intune Filters
 Version 3.0:  New UI with realtime search, sorting and filtering
 Version 4.0:  Microsoft Graph Authentication -module update and added support for Application Relationships report
+Version 4.1:  Bug fixes to not crash when Application has no detection rules. Added MgGraph DeviceManagement module to required modules list.
 #>
 
 <#
@@ -36,7 +37,7 @@ Version 4.0:  Microsoft Graph Authentication -module update and added support fo
    This script creates HTML Report from all Intune App Assignments and Relationships (Supersedence and Dependencies).
    This report shows information not easily available in Intune.
    
-   Version 4.0
+   Version 4.1
 
 .DESCRIPTION
    This script does HTML Report from Intune Application assigments and relationships (Supersedence and Dependencies).
@@ -68,6 +69,11 @@ Version 4.0:  Microsoft Graph Authentication -module update and added support fo
    - Create Application Relationships report (Supersedence and Dependencies)
    - Highlight problematic Win32App Detection rules in red color
 
+   ChangeLog v4.1
+   - Bug fixes to not crash when Application has no detection rules.
+   - Added MgGraph DeviceManagement module to required modules list.
+
+
    Script downloads EntraGroups, IntuneApps and IntuneFilters information from Graph API to local cache   (.\cache folder)
 
    Script also downloads Application icons to local cache to get better looking report.
@@ -81,7 +87,7 @@ Version 4.0:  Microsoft Graph Authentication -module update and added support fo
    Senior Modern Management Principal
    Microsoft MVP - Windows and Intune
    
-   2025-09-23
+   2025-09-24
 
    https://github.com/petripaavola/Get-IntuneAppAssignmentsAndRelationsReport
 
@@ -183,7 +189,7 @@ if ($UseOfflineCache) {
     $DoNotDownloadAppIcons = $true
 }
 
-$ScriptVersion = "4.0"
+$ScriptVersion = "4.1"
 
 $ComputerName = $null
 
@@ -528,6 +534,7 @@ try {
 				"Microsoft.Graph.Authentication",
 				"Microsoft.Graph.Groups",
 				"Microsoft.Graph.Beta.Devices.CorporateManagement"
+				"Microsoft.Graph.Beta.DeviceManagement"
 			)
 
 			$ModulesAvailable = @()
@@ -2525,7 +2532,8 @@ $OutFile = "$($ReportRunDateFileName)_Intune_Application_Relationship_report.htm
   function Get-DetectionRules {
     param($app)
     $rules = @()
-    if ($app -and $app.detectionRules) {
+
+	if ($app -and $app.detectionRules) {
       foreach ($rule in $app.detectionRules) {
         if ($rule.PSObject.Properties['@odata.type']) {
           if ($rule.'@odata.type' -eq '#microsoft.graph.win32LobAppFileSystemDetection' -or $rule.'@odata.type' -eq '#microsoft.graph.win32LobAppRegistryDetection') {
@@ -2635,7 +2643,15 @@ $OutFile = "$($ReportRunDateFileName)_Intune_Application_Relationship_report.htm
       $tgtApp = $AllApps | Where-Object { $_.displayName -eq $r.targetDisplayName }
       Write-Verbose ("Source app: {0}" -f $r.sourceDisplayName)
       Write-Verbose ("Target app: {0}" -f $r.targetDisplayName)
-      if ($srcApp -and $srcApp.detectionRules) {
+
+      # Test that $srcApp.detectionRules exists before accessing it
+      if (-not $srcApp.PSObject.Properties['detectionRules']) {
+        # No detectionRules property
+        Write-Verbose "Source app has no detectionRules property."
+        Continue
+      }
+
+	  if ($srcApp -and $srcApp.detectionRules) {
         Write-Verbose ("Source detectionRules: {0}" -f ($srcApp.detectionRules | ConvertTo-Json -Depth 5))
       } else {
         Write-Verbose "Source detectionRules: (none)"
