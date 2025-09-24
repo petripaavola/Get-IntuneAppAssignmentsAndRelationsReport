@@ -20,6 +20,7 @@ Install all required modules with:
 Install-Module Microsoft.Graph.Authentication -Scope CurrentUser
 Install-Module Microsoft.Graph.Groups -Scope CurrentUser
 Install-Module Microsoft.Graph.Beta.Devices.CorporateManagement -Scope CurrentUser
+Install-Module Microsoft.Graph.Beta.DeviceManagement -Scope CurrentUser
 ```
 
 > **Note:** You may need to update modules if you have older versions installed. Administrator rights may be required for system-wide installation.
