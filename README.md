@@ -64,6 +64,7 @@ This will create two HTML files in the current directory:
 
 The script will prompt you to authenticate with Microsoft Graph and requires the following delegated permissions:
 
+- `DeviceManagementConfiguration.Read.All`
 - `DeviceManagementApps.Read.All`
 - `Group.Read.All`
 - `Directory.Read.All`
